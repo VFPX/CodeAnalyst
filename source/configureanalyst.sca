@@ -1,0 +1,966 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RK
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Height = 425
+Width = 721
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "Code Analyst Configuration"
+MaxButton = .F.
+MinButton = .F.
+MinHeight = 396
+MinWidth = 600
+WindowType = 1
+LockScreen = .F.
+_memberdata =       87<VFPData><memberdata name="resetrules" type="method" display="ResetRules"/></VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DODEFAULT()
+LOCAL la(1)
+IF AGETFILEVERSION(la,HOME()+"ANALYST.APP")>0
+	THIS.Caption = "Code Analyst Configuration (version "+la(4)+")"
+ENDIF
+GO TOP IN CODERULE
+THIS.grdrules.SetFocus()
+THIS.cboRules.ListIndex=1
+ENDPROC
+PROCEDURE addrule
+INSERT INTO (_SCREEN._analyst.cRuleDir+"CODERULE") (Name,Active,uniqueid,timestamp) VALUES ("New Rule",.f.,SYS(2015),DATETIME())
+THISFORM.Refresh()
+ENDPROC
+PROCEDURE resetrules
+
+LOCAL lcXMLFile
+LOCAL llCont
+llCont = .T.
+IF NOT EMPTY(THIS.txtXMLFile.Value) AND THIS.txtXMLFile.Value <> "(internal)"
+	IF "http"$LOWER(THIS.txtXMLFile.Value)
+		LOCAL lo as MSXML2.DomDocument
+		lo = CREATEOBJECT("MSXML.DomDocument")
+		IF lo.load(TRIM(THIS.txtXMLFile.Value))
+			lcXMLFile = lo.xml
+		ENDIF
+	ELSE
+		lcXMLFile = FILETOSTR(THIS.txtXMLFile.Value)
+	ENDIF
+	IF USED("_CODERULE")
+		USE IN _CODERULE
+	ENDIF
+	IF EMPTY(lcXMLFile)
+		USE _CODERULE IN 0	
+	ELSE
+	TRY
+		XMLTOCURSOR(lcXMLFile,"_CODERULE")
+		IF NOT (TYPE("_CODERULE.NAME")="C" AND TYPE("_SCREEN.SCRIPT")="M")
+			USE IN _CODERULE
+			** Invalid file
+			llCont = .F.
+			MESSAGEBOX("Invalid CodeRule file. Please ensure the reset file is in a valid CodeRule XML format.",16,"Code Analyst")
+		ENDIF
+	CATCH
+		USE _CODERULE IN 0	
+	ENDTRY
+	ENDIF
+ELSE
+	IF NOT USED("_CODERULE")
+		USE _CODERULE IN 0
+	ENDIF
+
+ENDIF
+IF llCont
+IF MESSAGEBOX("Are you sure you want to clear out existing rules and restore a different set of rules?",4+32)=6
+DELETE FROM _SCREEN._analyst.cRuleDir+"CODERULE"
+
+SELECT _CODERULE
+SCAN
+	SCATTER MEMVAR MEMO
+	INSERT INTO (_SCREEN._analyst.cRuleDir+"CODERULE") FROM MEMVAR
+ENDSCAN
+
+THISFORM.ShowRules()
+ENDIF
+ENDIF
+ENDPROC
+PROCEDURE showrules
+SET DELETED ON
+DO CASE
+	CASE THIS.cboRules.Value="Line"
+		SET FILTER TO type="L" IN CODERULE
+		THISFORM.Refresh()
+	CASE THIS.cboRules.Value="File"
+		SET FILTER TO type="F" IN CODERULE
+		THISFORM.Refresh()
+	CASE THIS.cboRules.Value="All Rules"
+		SET FILTER TO .T. IN CODERULE
+		THISFORM.Refresh()
+	OTHERWISE
+		SET FILTER TO type="M" IN CODERULE
+		THISFORM.Refresh()
+
+ENDCASE
+GO TOP IN coderule
+RETURN
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+*showrules 
+*addrule 
+*resetrules 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RX
+[CLASS] combobox
+[BASECLASS] combobox
+[OBJNAME] cboRules
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 130
+ColumnCount = 0
+ColumnWidths = ""
+RowSourceType = 1
+RowSource = "All Rules,Line,Function/Method,File"
+FirstElement = 1
+Height = 24
+Left = 120
+NumberOfElements = 0
+Style = 2
+Top = 5
+Width = 207
+Name = "cboRules"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+THISFORM.ShowRules()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdUpdate
+[PARENT] Form1
+[START PROPERTIES]
+Top = 4
+Left = 528
+Height = 27
+Width = 84
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 256
+Caption = "\<Update"
+Name = "cmdUpdate"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+IF PEMSTATUS(_SCREEN,"_analyst",5)
+	_SCREEN._analyst.loadrules()
+	_SCREEN._analyst.setprefs()
+ENDIF
+
+THISFORM.Release()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RZ
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdCancel
+[PARENT] Form1
+[START PROPERTIES]
+Top = 4
+Left = 624
+Height = 27
+Width = 84
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 256
+Cancel = .T.
+Caption = "\<Cancel"
+Name = "cmdCancel"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.Release()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] lblFilter
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Caption = "Filter Rules"
+Height = 17
+Left = 12
+Top = 10
+Width = 100
+Name = "lblFilter"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] editbox
+[BASECLASS] editbox
+[OBJNAME] edtDescript
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 20
+Height = 96
+Left = 12
+Top = 240
+Width = 348
+ControlSource = "coderule.descript"
+Name = "edtDescript"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00GZVPY
+[CLASS] editbox
+[BASECLASS] editbox
+[OBJNAME] edtScript
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 30
+Height = 96
+Left = 372
+Top = 240
+Width = 336
+ControlSource = "coderule.script"
+Name = "edtScript"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 514
+Caption = "Description"
+Height = 17
+Left = 12
+Top = 219
+Width = 100
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00GZVPZ
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 514
+Caption = "Script"
+Height = 17
+Left = 372
+Top = 221
+Width = 100
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTP
+[CLASS] grid
+[BASECLASS] grid
+[OBJNAME] grdRules
+[PARENT] Form1
+[START PROPERTIES]
+ColumnCount = 5
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 75
+DeleteMark = .F.
+GridLines = 3
+GridLineWidth = 1
+HeaderHeight = 16
+Height = 176
+Left = 12
+Panel = 1
+RecordMark = .F.
+RecordSource = "coderule"
+RowHeight = 16
+ScrollBars = 3
+Top = 36
+Width = 696
+ForeColor = 0,0,0
+BackColor = 255,255,255
+GridLineColor = 192,192,192
+HighlightStyle = 2
+Name = "grdRules"
+Column1.FontBold = .F.
+Column1.FontName = "Tahoma"
+Column1.FontSize = 8
+Column1.Alignment = 0
+Column1.ControlSource = "coderule.active"
+Column1.CurrentControl = "Check1"
+Column1.Width = 54
+Column1.Sparse = .F.
+Column1.Visible = .T.
+Column1.DynamicBackColor = ""
+Column1.ForeColor = 0,0,0
+Column1.BackColor = 255,255,255
+Column1.Name = "Column1"
+Column2.FontBold = .F.
+Column2.FontName = "Tahoma"
+Column2.FontSize = 8
+Column2.Alignment = 0
+Column2.ControlSource = "coderule.name"
+Column2.Width = 222
+Column2.Visible = .T.
+Column2.DynamicBackColor = ""
+Column2.ForeColor = 0,0,0
+Column2.BackColor = 255,255,255
+Column2.Name = "Column2"
+Column3.FontBold = .F.
+Column3.FontName = "Tahoma"
+Column3.FontSize = 8
+Column3.Alignment = 0
+Column3.ControlSource = "coderule.type"
+Column3.CurrentControl = "Combo1"
+Column3.Width = 130
+Column3.Sparse = .F.
+Column3.Visible = .T.
+Column3.DynamicBackColor = ""
+Column3.ForeColor = 0,0,0
+Column3.BackColor = 255,255,255
+Column3.Name = "Column3"
+Column4.FontBold = .F.
+Column4.FontName = "Tahoma"
+Column4.FontSize = 8
+Column4.Alignment = 0
+Column4.ControlSource = "coderule.descript"
+Column4.CurrentControl = "Text1"
+Column4.Width = 75
+Column4.Sparse = .T.
+Column4.Visible = .T.
+Column4.DynamicBackColor = ""
+Column4.ForeColor = 0,0,0
+Column4.BackColor = 255,255,255
+Column4.Name = "Column4"
+Column5.FontBold = .F.
+Column5.FontName = "Tahoma"
+Column5.FontSize = 8
+Column5.Alignment = 0
+Column5.ControlSource = "coderule.script"
+Column5.Width = 75
+Column5.Visible = .T.
+Column5.DynamicBackColor = ""
+Column5.ForeColor = 0,0,0
+Column5.BackColor = 255,255,255
+Column5.Name = "Column5"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE AfterRowColChange
+LPARAMETERS nColIndex
+
+THISFORM.edtDescript.Refresh()
+THISFORM.edtScript.Refresh()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTQ
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.grdRules.Column1
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 2
+Caption = "Active"
+ForeColor = 0,0,0
+BackColor = 192,192,192
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTR
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.grdRules.Column1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+BorderStyle = 0
+Margin = 0
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTS
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] Check1
+[PARENT] Form1.grdRules.Column1
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+Caption = ""
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Check1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTT
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.grdRules.Column2
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 2
+Caption = "Name"
+ForeColor = 0,0,0
+BackColor = 192,192,192
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTU
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.grdRules.Column2
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTV
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.grdRules.Column3
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 2
+Caption = "Type"
+ForeColor = 0,0,0
+BackColor = 192,192,192
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTW
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.grdRules.Column3
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTX
+[CLASS] combobox
+[BASECLASS] combobox
+[OBJNAME] Combo1
+[PARENT] Form1.grdRules.Column3
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+BoundColumn = 2
+Height = 24
+Left = 21
+Margin = 0
+SpecialEffect = 1
+Style = 2
+Top = 23
+Width = 100
+BorderStyle = 0
+Name = "Combo1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DODEFAULT()
+THIS.AddItem("Method")
+THIS.List(THIS.ListCount,2)="M"
+THIS.AddItem("File")
+THIS.List(THIS.ListCount,2)="F"
+THIS.AddItem("Object")
+THIS.List(THIS.ListCount,2)="O"
+THIS.AddItem("Line")
+THIS.List(THIS.ListCount,2)="L"
+THIS.AddItem("Pre-Analysis")
+THIS.List(THIS.ListCount,2)="I"
+
+THIS.AddItem("Post-Analysis")
+THIS.List(THIS.ListCount,2)="P"
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTY
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.grdRules.Column4
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 2
+Caption = "Description"
+ForeColor = 0,0,0
+BackColor = 192,192,192
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JTZ
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.grdRules.Column4
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JU0
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.grdRules.Column5
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 2
+Caption = "Script"
+ForeColor = 0,0,0
+BackColor = 192,192,192
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T00H4JU1
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.grdRules.Column5
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdAdd
+[PARENT] Form1
+[START PROPERTIES]
+Top = 4
+Left = 435
+Height = 27
+Width = 84
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 256
+Caption = "\<Add"
+Name = "cmdAdd"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THIS.Parent.AddRule()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1T60XGJEZ
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command4
+[PARENT] Form1
+[START PROPERTIES]
+Top = 217
+Left = 624
+Height = 22
+Width = 84
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 768
+Caption = "\<Edit..."
+Name = "Command4"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+MODIFY MEMO coderule.Script
+THISFORM.Refresh()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XI0RR1Y3
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdReset
+[PARENT] Form1
+[START PROPERTIES]
+Top = 4
+Left = 336
+Height = 27
+Width = 84
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 256
+Caption = "\<Reset..."
+ToolTipText = "Reset rules to the default rules"
+Name = "cmdReset"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THIS.Parent.ResetRules()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] cfoxtextbox
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] textbox
+[OBJNAME] txtFont
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 642
+Height = 21
+Left = 12
+ReadOnly = .T.
+Top = 348
+Width = 612
+Name = "txtFont"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DODEFAULT()
+
+THIS.Value = _SCREEN._analyst.cFontString
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RK
+[CLASS] cfoxbutton
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] commandbutton
+[OBJNAME] cmdFont
+[PARENT] Form1
+[START PROPERTIES]
+Top = 348
+Left = 636
+Anchor = 768
+Caption = "Font..."
+Name = "cmdFont"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lc
+lc = GETFONT()
+IF NOT EMPTY(lc)
+	THIS.PARENT.txtFont.VALUE = lc
+	_SCREEN._analyst.cFontString = lc
+ENDIF
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] cfoxtextbox
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] textbox
+[OBJNAME] txtRuleDir
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 642
+Height = 21
+Left = 300
+ReadOnly = .T.
+Top = 372
+Width = 324
+Name = "txtRuleDir"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DODEFAULT()
+IF EMPTY(_SCREEN._analyst.cRuleDir) OR _SCREEN._analyst.lUseDefaultDir
+	THIS.Value = "(current project directory)"
+ELSE
+	THIS.Value = _SCREEN._analyst.cRuleDir
+ENDIF
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RI
+[CLASS] cfoxbutton
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] commandbutton
+[OBJNAME] cmdDir
+[PARENT] Form1
+[START PROPERTIES]
+Top = 372
+Left = 636
+Anchor = 768
+Caption = "Choose..."
+Name = "cmdDir"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lc
+lc = _SCREEN._analyst.cRuledir
+lc = GETDIR(lc,"Location of CodeRule table","Specify location for rules (cancel to use startup folder)")
+IF NOT EMPTY(lc)
+	_SCREEN._analyst.cRuleDir = lc
+	THIS.Parent.txtRuleDir.Value = lc
+	_SCREEN._analyst.lUseDefaultDir = .F.
+	IF NOT FILE(lc+"\CODERULE.DBF")
+		SELECT * FROM CODERULE INTO TABLE (lc+"\coderule")
+	ENDIF
+ELSE
+	_SCREEN._analyst.cRuleDir = ""
+	_SCREEN._analyst.lUseDefaultDir = .T.
+ENDIF
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1SZ1057RK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label3
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 514
+Caption = "Location for Code Rule file (leave blank for current)"
+Height = 17
+Left = 15
+Top = 376
+Width = 261
+Name = "Label3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2PH0UP6FG
+[CLASS] cfoxtextbox
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] textbox
+[OBJNAME] txtXMLFile
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 642
+Height = 21
+Left = 300
+ReadOnly = .F.
+Top = 397
+Width = 324
+Name = "txtXMLFile"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DODEFAULT()
+IF EMPTY(_SCREEN._analyst.cResetFile)
+	THIS.Value = "(internal)"
+ELSE
+	THIS.Value = _SCREEN._analyst.cResetFile
+ENDIF
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2PH0UP6FH
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label4
+[PARENT] Form1
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Anchor = 514
+Caption = "Reset/Load rules from XML file:"
+Height = 17
+Left = 15
+Top = 401
+Width = 261
+Name = "Label4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2PH0UP6FI
+[CLASS] cfoxbutton
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] commandbutton
+[OBJNAME] Cfoxbutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 396
+Left = 636
+Anchor = 768
+Caption = "Choose..."
+Name = "Cfoxbutton1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lc
+lc = GETFILE("XML","CodeRule File:","Load",0,"Select XML CodeRule file")
+IF NOT EMPTY(lc)
+	THIS.Parent.txtXMLFile.Value = lc
+	_SCREEN._Analyst.cResetFile = lc
+ELSE
+	THIS.Parent.txtXMLFile.Value = "(internal)"
+	_SCREEN._Analyst.cResetFile = ""
+ENDIF
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Tahoma, 0, 8, 5, 13, 11, 23, 2, 0
+[END PROPERTIES]
+[EOF]

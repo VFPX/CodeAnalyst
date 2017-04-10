@@ -1,0 +1,762 @@
+<?xml version = "1.0" encoding="Windows-1252" standalone="yes"?>
+<VFPData>
+	<xsd:schema id="VFPData" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="VFPData" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="coderule" minOccurs="0" maxOccurs="unbounded">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="type">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="1"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="name">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="30"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="active" type="xsd:boolean"/>
+								<xsd:element name="descript">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="2147483647"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="script">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="2147483647"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="program">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="2147483647"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="classlib">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="30"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="classname">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="50"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="timestamp" type="xsd:dateTime"/>
+								<xsd:element name="uniqueid">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:maxLength value="10"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+				<xsd:anyAttribute namespace="http://www.w3.org/XML/1998/namespace" processContents="lax"/>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<coderule>
+		<type>M</type>
+		<name>Code Test</name>
+		<active>false</active>
+		<descript/>
+		<script>MESSAGEBOX(_SCREEN._analyst.cFuncName,"Function Test")</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXR</uniqueid>
+	</coderule>
+	<coderule>
+		<type>L</type>
+		<name>Line Test</name>
+		<active>false</active>
+		<descript/>
+		<script>LOCAL lcLine 
+lcLine = _SCREEN._analyst.cLine
+IF "andrew"$LOWER(lcLine)
+	MESSAGEBOX("THis line has Andrew on it","Line Validation")
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXS</uniqueid>
+	</coderule>
+	<coderule>
+		<type>F</type>
+		<name>File Test</name>
+		<active>false</active>
+		<descript/>
+		<script>MESSAGEBOX(_SCREEN._analyst.cFile,"File Test")</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXT</uniqueid>
+	</coderule>
+	<coderule>
+		<type>M</type>
+		<name>Too Many Comments</name>
+		<active>true</active>
+		<descript>Puts up a message if your code has more than 1/3 comments compared to code</descript>
+		<script>LOCAL lni
+LOCAL lo
+lo = _SCREEN._analyst
+LOCAL la(1)
+lnLines =ALINES(la,_SCREEN._analyst.ccode)
+LOCAL lnComments
+LOCAL lnCode,lnEmpty
+STORE 0 TO lnComments,lnCode,lnEmpty
+LOCAL lcLine
+
+FOR lni = 1 TO lnLines
+	lcLine = la(lni)
+	IF EMPTY(lcLine)
+		lnEmpty = lnEmpty + 1
+	ENDIF
+
+	IF ALLTRIM(STRTRAN(lcLine,"	"))="*"
+		lnComments = lnComments + 1
+	ELSE
+		lnCode = lnCode + 1
+	ENDIF
+ENDFOR
+
+lo.aCode(ALEN(lo.aCode,1),3) = lnCode
+IF lnComments&gt;lnCode/3
+	lo.AddWarning(lo.aCode(ALEN(lo.aCode,1),1)+" has an excessive number ("+LTRIM(STR(lnComments)) +" of "+LTRIM(STR(lnLines))+" lines) of comments")
+	lo.LDisplayForm = .T.
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXU</uniqueid>
+	</coderule>
+	<coderule>
+		<type>M</type>
+		<name>Return within WITH</name>
+		<active>true</active>
+		<descript>Identifies if a given method has a RETURN within a WITH ENDWITH statement  - a known gotcha for C5 errors</descript>
+		<script>LOCAL lni
+LOCAL lo
+lo = _SCREEN._analyst
+LOCAL la(1)
+lnLines =ALINES(la,_SCREEN._analyst.ccode)
+LOCAL lnComments
+LOCAL lnCode,lnEmpty
+STORE 0 TO lnComments,lnCode,lnEmpty
+LOCAL lcLine
+LOCAL llinWidth
+llInWith = .f.
+
+FOR lni = 1 TO lnLines
+	lcLine = ALLTRIM(STRTRAN(la(lni),"	"))
+
+	IF EMPTY(lcLIne) OR lcLine="*"
+		LOOP
+	ELSE
+		IF UPPER(lcLine) = "WITH " 
+			IF lni=1 OR (lni&gt;1 AND RIGHT(ALLTRIM(la(lni-1)),1)&lt;&gt;";")
+			llInWith = .T.
+			ENDIF
+		ENDIF
+		IF llInWith AND UPPER(LEFT(lcLine,6)) = "RETURN"
+			lo.AddWarning("Method "+lo.aCode(ALEN(lo.aCode,1),1) +  ;
+			IIF(NOT EMPTY(lo.aCode(ALEN(lo.aCode,1),4))," in "+lo.aCode(ALEN(lo.aCode,1),4),"")+ ;
+			" has a RETURN within a WITH statement")
+		ENDIF
+		IF UPPER(lcLine)="ENDWITH"
+			llinWith = .F.
+		ENDIF
+	ENDIF
+	
+ENDFOR
+
+IF lnComments&gt;lnCode/3
+	lo.aCode(ALEN(lo.aCode,1),3) = lnCode
+	lo.LDisplayForm = .T.
+ENDIF
+</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXV</uniqueid>
+	</coderule>
+	<coderule>
+		<type>M</type>
+		<name>Too Many Lines</name>
+		<active>true</active>
+		<descript>Warns if a particular method is over x lines.</descript>
+		<script>LOCAL lni
+LOCAL lo
+lo = _SCREEN._analyst
+LOCAL la(1)
+lnLines =ALINES(la,_SCREEN._analyst.ccode)
+IF lnLines&gt;150
+
+	lo.AddWarning("Too many lines in "+lo.aCode(ALEN(lo.aCode,1),1)+" ("+LTRIM(STR(lnLines)) +")")
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXW</uniqueid>
+	</coderule>
+	<coderule>
+		<type>M</type>
+		<name>Nesting Level</name>
+		<active>true</active>
+		<descript>Warns if there are more than a certain number of loop structures in each method. Set the lnThresh variable to set the threshold.</descript>
+		<script>LOCAL lnThresh
+lnThresh = 5
+
+LOCAL lni
+LOCAL lo,lcWord
+LOCAL lcFuncNAme
+lo = _SCREEN._analyst
+lcFuncName = _SCREEN._analyst.cFuncName
+IF EMPTY(lcFuncName)
+	lcFuncName = _SCREEN._analyst.acode(ALEN(_SCREEN._analyst.acode,1),1)
+ENDIF
+LOCAL la(1)
+lnLines =ALINES(la,_SCREEN._analyst.ccode)
+LOCAL lnEnd
+lnEnd = 0
+LOCAL lcLine
+LOCAL laEnds(5)
+laEnds(1) = "ENDIF"
+laEnds(2) = "ENDCASE"
+laEnds(3) = "ENDFOR"
+laEnds(4) = "ENDDO"
+laEnds(5) = "NEXT"
+
+FOR lni = 1 TO lnLines
+	IF EMPTY(la(lni))
+		LOOP
+	ENDIF
+	lcLine = ALLTRIM(STRTRAN(la(lni),"	"))
+	IF EMPTY(lcLine)
+		LOOP
+	ENDIF
+
+	IF lcLine = "*"
+
+	ELSE
+		IF OCCURS(" ",lcLine)&gt;0
+			lcWord = UPPER(LEFT(lcLine,ATC(" ",lcLine)-1))
+		ELSE
+		lcWord = UPPER(lcLine)
+		ENDIF
+		IF NOT EMPTY(lcWord)
+		IF ASCAN(laEnds,lcWord)&gt;0
+			lnEnd = lnEnd + 1
+		ENDIF
+		ENDIF
+	ENDIF
+ENDFOR
+
+IF lnEnd &gt; 5
+	lo.AddWarning(lcFuncName+" has an excessive number ("+LTRIM(STR(lnEnd)) +") Loop structures.")
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXX</uniqueid>
+	</coderule>
+	<coderule>
+		<type>M</type>
+		<name>No Return Value</name>
+		<active>true</active>
+		<descript>Verifies that all programs have functions with a Return value.</descript>
+		<script>LOCAL lo
+lo = _SCREEN._analyst
+IF UPPER(JUSTEXT(lo.cFile))&lt;&gt;"PRG"
+   RETURN     
+ENDIF
+IF NOT "RETURN"$_SCREEN._analyst.ccode
+	lo.AddWarning("Function "+lo.aCode(ALEN(lo.aCode,1),1)+" does not have a return value.")
+ENDIF
+</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXY</uniqueid>
+	</coderule>
+	<coderule>
+		<type>M</type>
+		<name>Too Many Return Values</name>
+		<active>true</active>
+		<descript>Warns if a function has too many return values.</descript>
+		<script>LOCAL lo
+lo = _SCREEN._analyst
+IF OCCURS(CHR(10)+"RETURN",_SCREEN._analyst.ccode) + OCCURS("	RETURN",_SCREEN._analyst.ccode)&gt;3
+	lo.AddWarning("Function "+lo.aCode(ALEN(lo.aCode,1),1)+" has more than 3 Return values")
+ENDIF
+</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EXZ</uniqueid>
+	</coderule>
+	<coderule>
+		<type>O</type>
+		<name>Cancel button not set</name>
+		<active>false</active>
+		<descript>Verifies that any button named Cancel has the Cancel property set to True.</descript>
+		<script>IF LOWER(_SCREEN._analyst.oObject.Baseclass)="command"
+IF _SCREEN._analyst.oObject.caption = "\&lt;Cancel"
+	IF NOT _SCREEN._analyst.oobject.cancel
+		_SCREEN._analyst.AddWarning("Cancel button does not have Cancel property set to True")
+	ENDIF
+ENDIF
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EY0</uniqueid>
+	</coderule>
+	<coderule>
+		<type>O</type>
+		<name>Using Default Object Name</name>
+		<active>false</active>
+		<descript>Checks to see if objects on a form have been named so they don't look like command1, command2, etc</descript>
+		<script>LOCAL lc
+lc = _SCREEN._analyst.oobject.baseclass
+IF INLIST(lc,"Header","Column","Page")
+	RETURN
+ENDIF
+LOCAL lcName,lcClass,lcBase
+lcName = LOWER(_SCREEN._analyst.oObject.name)
+lcClass = LOWER(_SCREEN._analyst.oObject.class)
+lcBase = LOWER(_SCREEN._analyst.oObject.baseclass)
+IF (lcName =lcClass  AND NOT lcName==lcClass) OR lcName=lcBase
+
+		_SCREEN._analyst.AddWarning("Object "+_SCREEN._analyst.cobject+" should be renamed.")
+ENDIF
+</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EY1</uniqueid>
+	</coderule>
+	<coderule>
+		<type>L</type>
+		<name>Too many redirects (Parents)</name>
+		<active>true</active>
+		<descript/>
+		<script>LOCAL lo
+lo = _SCREEN._analyst
+IF OCCURS(".PARENT",UPPER(_SCREEN._analyst.cLine))&gt;3
+ _SCREEN._analyst.addwarning("Line "+LTRIM(STR(lo.nLine))+ " in "+lo.cFuncName+" may have too many levels of Parents.")
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-22T09:26:30</timestamp>
+		<uniqueid>_1T40K8EY2</uniqueid>
+	</coderule>
+	<coderule>
+		<type>O</type>
+		<name>Similar Methods</name>
+		<active>true</active>
+		<descript>There are similiarities between two pieces of code in this class. The number of similar lines are greater than a third of the total line count.</descript>
+		<script>LOCAL lo
+lo = _SCREEN._analyst.oobject
+DIMENSION laMeth(1)
+laMeth(1) = "Init"
+lnMethods = AMEMBERS(la,lo,1)
+FOR lni = 1 TO lnMethods
+	IF la(lni,2)="Method"
+		IF ASCAN(laMeth,la(lni,1))=0
+			DIMENSION laMeth(ALEN(laMeth,1)+1)
+			laMeth(ALEN(laMeth,1))=la(lni,1)
+		ENDIF
+	ENDIF
+ENDFOR
+IF NOT PEMSTATUS(lo,"ReadMethod",5)
+	RETURN
+ENDIF
+FOR lni = 1 TO ALEN(laMeth,1)
+	lc = laMeth(lni)
+	lcContent = lo.ReadMethod(lc)
+	FOR lnx = 1 TO ALEN(laMeth,1)
+		lc2 = laMeth(lnx)
+		IF laMeth(lni) = laMeth(lnx)
+		   LOOP
+		ENDIF
+		lcContent2 = lo.ReadMethod(lc2)
+		lnLines = MEMLINES(lcContent)
+		IF MEMLINES(lcContent) = MEMLINES(lcContent2) AND MEMLINES(lcContent)&gt;0
+		        ** Check the lines
+		        lnSame = 0
+		        FOR lnLine = 1 TO MEMLINES(lcContent)
+		               IF MLINE(lcContent,lnLine) = MLINE(lcContent2,lnLine)
+		                   lnSame = lnSame + 1
+		               ENDIF
+		        ENDFOR
+IF lnSame&gt;lnLines/3
+		        _screen._analyst.addwarning("Method "+lc+" has "+LTRIM(STR(lnSame))+" lines (out of "+LTRIM(STR(lnLines))+")  that are identical to "+lc2)
+		ENDIF
+ENDIF
+	ENDFOR
+ENDFOR</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp/>
+		<uniqueid>_1T60XADAV</uniqueid>
+	</coderule>
+	<coderule>
+		<type>L</type>
+		<name>Using older date functions</name>
+		<active>false</active>
+		<descript/>
+		<script>IF [CTOD("  /  /  ")]$_SCREEN._codeanal.cLine
+	_screen._analyst.addwarning("Using CTOD on line "+LTRIM(STR(_SCREEN._code.cLine))+" consider using date() instead.")
+enDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp/>
+		<uniqueid>_1T610WQVN</uniqueid>
+	</coderule>
+	<coderule>
+		<type>O</type>
+		<name>Using THIS.Parent in a form</name>
+		<active>false</active>
+		<descript>Identifies if the form object has any methods that use THIS.Parent (which would be invalid)</descript>
+		<script>LOCAL lo
+lo = _SCREEN._analyst.oobject
+IF PROPER(lo.Baseclass)&lt;&gt;"Form"
+	RETURN
+ENDIF
+DIMENSION laMeth(1)
+laMeth(1) = "Init"
+lnMethods = AMEMBERS(la,lo,1)
+FOR lni = 1 TO lnMethods
+	IF la(lni,2)="Method"
+		IF ASCAN(laMeth,la(lni,1))=0
+			DIMENSION laMeth(ALEN(laMeth,1)+1)
+			laMeth(ALEN(laMeth,1))=la(lni,1)
+		ENDIF
+	ENDIF
+ENDFOR
+
+FOR lni = 1 TO ALEN(laMeth,1)
+	lc = laMeth(lni)
+	lcContent = lo.ReadMethod(lc)
+	IF "THIS.PARENT"$UPPER(lcContent)
+	        _screen._analyst.addwarning("Method "+lc+" of the form refers to THIS.Parent")
+	
+	ENDIF
+ENDFOR</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp/>
+		<uniqueid>_1T610WQVx</uniqueid>
+	</coderule>
+	<coderule>
+		<type>O</type>
+		<name>Relabel Default Object Names</name>
+		<active>false</active>
+		<descript>Automatically renames objects that use the default object name. (This is related to the Default Object Name rule but automatically corrects it)</descript>
+		<script>LOCAL lc
+lc = _SCREEN._analyst.oobject.baseclass
+IF INLIST(lc,"Header","Column","Page")
+	RETURN
+ENDIF
+DIMENSION laTypes(1,2)
+laTypes(1,1) = "label"
+laTypes(1,2) = "lbl"
+
+LOCAL lcName,lcClass,lcBase
+lcName = LOWER(_SCREEN._analyst.oObject.name)
+lcClass = LOWER(_SCREEN._analyst.oObject.class)
+lcBase = TRIM(LOWER(_SCREEN._analyst.oObject.baseclass))
+IF (lcName =lcClass  AND NOT lcName==lcClass) OR lcName=lcBase
+		IF PEMSTATUS(_SCREEN._analyst.oobject,"Caption",5)
+			IF ASCAN(laTypes,lcBase)&gt;0
+		        lcNewName = laTypes(ASCAN(laTypes,lcBase)+1)+PROPER(PADR(TRIM(STRTRAN(_SCREEN._analyst.oobject.caption," ")),20))
+		        lcNewName = STRTRAN(lcNewName,"(")
+		        lcNewName = STRTRAN(lcNewName,")")
+		        IF PEMSTATUS(_SCREEN._analyst.oobject.parent,lcNewName,5)
+		           ** Rename it again
+		           lcNewName = lcNewName + LTRIM(STR(_SCREEN._analyst.oobject.index))
+		           
+		        ENDIF
+		            _SCREEN._analyst.oobject.name = lcNewName
+			_SCREEN._analyst.AddWarning("Object "+_SCREEN._analyst.cobject+" was renamed to "+lcNewName)
+			ELSE
+			_SCREEN._analyst.AddWarning("No new name setting exists for "+lcBase)
+		        ENDIF
+		        
+		ENDIF
+
+ENDIF
+</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-05-30T15:16:38</timestamp>
+		<uniqueid>_1TC0WVISK</uniqueid>
+	</coderule>
+	<coderule>
+		<type>O</type>
+		<name>Possible BindEvent Use?</name>
+		<active>true</active>
+		<descript>Checks to see if the same header code is re-used - if so, it's a good candidate for BINDEVENT.</descript>
+		<script>LOCAL lo
+lo = _SCREEN._analyst.oobject
+LOCAL loc,lc1,lc2
+IF LOWER(lo.baseclass)="grid"
+	FOR EACH loC IN lo.Columns
+		IF PEMSTATUS(loc,"Header1",5)
+			IF EMPTY(lc1)
+				lc1 = loC.Header1.ReadMethod("Click")
+				LOOP
+			ENDIF
+			lc2 = loC.Header1.ReadMethod("Click")
+			IF lc1 = lc2 AND NOT EMPTY(lc1) AND NOT EMPTY(lc2)
+				** Possible candidate.
+				_SCREEN._analyst.AddWarning("Duplicate methods in Header - Consider using BINDEVENT")
+			ENDIF
+		ENDIF
+	ENDFOR
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2006-10-12T14:48:30</timestamp>
+		<uniqueid>_1X30VQMPU</uniqueid>
+	</coderule>
+	<coderule>
+		<type>L</type>
+		<name>Use of MESSAGEBOX</name>
+		<active>false</active>
+		<descript>Identifies if code is using MESSAGEBOX. This could be used if you want to authorize use of a particular method for calling Messages.</descript>
+		<script>LOCAL lo
+lo = _SCREEN._analyst
+IF OCCURS("MESSAGEBOX(",UPPER(_SCREEN._analyst.cLine))&gt;0
+ _SCREEN._analyst.addwarning("Code is using MESSAGEBOX instead of project specific tool")
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2008-05-31T00:00:00</timestamp>
+		<uniqueid>_2DS0QGQJN</uniqueid>
+	</coderule>
+	<coderule>
+		<type>L</type>
+		<name>Invalid File Path for CD</name>
+		<active>true</active>
+		<descript>Identifies if you are using &amp; for a CD statement instead of ( ) which supports folders with spaces (thanks to Rick Schummer)</descript>
+		<script>LOCAL lo
+lo = _SCREEN._analyst
+IF OCCURS("CD &amp;(",UPPER(_SCREEN._analyst.cLine))&gt;0
+ _SCREEN._analyst.addwarning("You should use ( ) instead of &amp; for Folder substitution")
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2008-12-19T00:00:00</timestamp>
+		<uniqueid>_2JE0E5JLG</uniqueid>
+	</coderule>
+	<coderule>
+		<type>M</type>
+		<name>Method Calling</name>
+		<active>true</active>
+		<descript>Adding method into details</descript>
+		<script>LOCAL lc
+LOCAL llAdd
+llAdd = .T.
+LOCAL llKeyword
+llKeyword = .f.
+
+IF NOT USED("FDKEYWRD")
+	IF FILE(HOME()+"WIZARDS\FDKEYWRD.DBF")
+		USE (HOME()+"WIZARDS\FDKEYWRD") IN 0
+		llKeyWord = .T.
+	ENDIF
+ELSE
+	llKeyWord = .T.
+ENDIF
+
+IF NOT USED("METHODAnalysis")
+SELECT 0
+CREATE CURSOR MethodAnalysis (cMethodName c(50),cFileName C(254))
+ENDIF
+lc = _SCREEN._Analyst.cfuncname
+IF llKeyWord
+	IF SEEK(UPPER(lc),"FDKEYWRD",1)
+		llAdd = .F.
+	ENDIF
+
+ENDIF
+IF llAdd
+lc2 = _SCREEN._Analyst.cFile
+IF TRIM(lc)&lt;&gt;TRIM(lc2)
+INSERT INTO MethodAnalysis (cmethodname,cfilename) values (lc,lc2)
+ENDIF
+
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2009-11-09T08:24:18</timestamp>
+		<uniqueid>_2SG0I04XC</uniqueid>
+	</coderule>
+	<coderule>
+		<type>L</type>
+		<name>Line Methods</name>
+		<active>true</active>
+		<descript/>
+		<script>LOCAL lcLine
+lcLine = _SCREEN._Analyst.cline
+LOCAL lcFunc
+LOCAL llKeyword
+llKeyword = .f.
+
+IF NOT USED("FDKEYWRD")
+	IF FILE(HOME()+"WIZARDS\FDKEYWRD.DBF")
+		USE (HOME()+"WIZARDS\FDKEYWRD") IN 0
+		llKeyWord = .T.
+	ENDIF
+ELSE
+	llKeyWord = .T.
+ENDIF
+
+lcFunc = _SCREEN._Analyst.cfuncname
+
+IF NOT USED("LineAnalysis")
+	SELECT 0
+	CREATE CURSOR LineAnalysis (cfunc C(50), cCalls C(70),cCall C(254))
+	INDEX ON UPPER(cCalls) TAG cCalls
+ENDIF
+
+lcCalls = ""
+
+FOR lni = 1 to getwordcount(lcLine)
+	llAdd = .T.
+	IF "("$getwordnum(lcLine,lni) OR "DO "$getwordnum(lcLine,lni)
+		lcCalls = TRIM(getwordnum(lcLine,lni))
+		lcCall =  TRIM(getwordnum(lcLine,lni))
+		IF llKeyWord
+			lcCalls = TRIM(LEFT(lcCalls,ATC("(",lcCalls)-1))
+			IF lcCalls = "="
+			lcCalls = SUBSTR(lcCalls,2)
+			ENDIF
+			IF LEN(lcCalls)=1 AND INLIST(UPPER(lcCalls),"C","D","T","N","L")
+			llAdd = .F.
+			ENDIF
+			IF LEN(lcCalls)=0
+			llAdd = .F.
+			ENDIF
+			IF llAdd
+				activate screen
+				IF SEEK(UPPER(lcCalls),"FDKEYWRD",1)
+					llAdd = .F.
+				ENDIF
+			ENDIF
+		ENDIF
+		IF "."$lcCalls AND RIGHT(lcCalls,1)&lt;&gt;"."
+			lcCalls = SUBSTR(lcCalls,RATC(".",lcCalls)+1)
+		ENDIF
+		IF llAdd AND NOT SEEK(UPPER(lcCalls),"LineAnalysis",1)
+			INSERT INTO LineAnalysis (cfunc,ccalls,ccall) VALUES (lcFunc,lcCalls,lcCall)
+		ENDIF
+	ENDIF
+ENDFOR</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2009-11-09T08:29:06</timestamp>
+		<uniqueid>_2SG0I6AV7</uniqueid>
+	</coderule>
+	<coderule>
+		<type>P</type>
+		<name>Unused Methods</name>
+		<active>true</active>
+		<descript/>
+		<script>LOCAL lni
+LOCAL la(1)
+LOCAL la2(1)
+
+IF USED("LINEANALYSIS") AND USED("METHODANALYSIS")
+	SELECT COUNT(*) FROM MethodAnalysis ;
+			WHERE UPPER(cmethodname) ;
+				NOT IN (SELECT UPPER(cCalls) FROM lineAnalysis) ;
+		INTO ARRAY la
+	IF ALEN(la,1)&gt;0
+		SELECT * FROM MethodAnalysis ;
+			WHERE UPPER(cmethodname) ;
+				NOT IN (SELECT UPPER(cCalls) FROM lineAnalysis) ;
+			INTO ARRAY la2
+		IF _TALLY&gt;0	
+		FOR lni = 1 TO ALEN(la2,1)
+			 _SCREEN._analyst.addwarning("The method " + ;
+			 	TRIM(la2(lni,1))+" in "+TRIM(la2(lni,2))+;
+			 	" is never called.")
+		ENDFOR
+ENDIF
+	ENDIF
+ENDIF</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2009-11-09T10:51:39</timestamp>
+		<uniqueid>_2SG0NA1HG</uniqueid>
+	</coderule>
+	<coderule>
+		<type>I</type>
+		<name>Unused Method Setup</name>
+		<active>true</active>
+		<descript/>
+		<script>IF NOT USED("FDKEYWRD")
+	IF FILE(HOME()+"WIZARDS\FDKEYWRD.DBF")
+		USE (HOME()+"WIZARDS\FDKEYWRD") IN 0
+	ENDIF
+ENDIF
+LOCAL lc
+lc = SET("SAFETY")
+SET SAFETY OFF
+IF USED("LINEANALYSIS")
+ZAP IN LineAnalysis
+ENDIF
+IF USED("METHODANALYSIS")
+ZAP IN MethodAnalysis
+ENDIF
+SET SAFETY &amp;lc</script>
+		<program/>
+		<classlib/>
+		<classname/>
+		<timestamp>2009-11-09T11:07:13</timestamp>
+		<uniqueid>_2SG0NU1T0</uniqueid>
+	</coderule>
+</VFPData>

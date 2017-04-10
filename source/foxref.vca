@@ -1,0 +1,1408 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Class     
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JF0V8MNW
+[CLASS] olecontrol
+[BASECLASS] olecontrol
+[OBJNAME] cwebbrowser
+[START PROPERTIES]
+Height = 100
+Width = 100
+nbackcolor = 16777215
+cfontface = Tahoma
+nfontsize = 11
+Name = "cwebbrowser"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE BeforeNavigate2
+*** ActiveX Control Event ***
+LPARAMETERS pdisp, url, flags, targetframename, postdata, headers, cancel
+
+IF url = "vfps://"
+	Cancel = .T.
+
+	url = lower(url)
+	DO CASE
+	CASE url="vfps://close/"
+		THISFORM.Release()
+	OTHERWISE
+	ENDCASE
+ENDIF
+
+ENDPROC
+PROCEDURE Init
+THIS.Navigate("about:blank")
+ENDPROC
+PROCEDURE Refresh
+*** ActiveX Control Method ***
+NODEFAULT
+
+ENDPROC
+PROCEDURE getfonttag
+RETURN [<font style="FONT-SIZE: ]+TRANSFORM(INT(THIS.nFontSize))+[px; FONT-FAMILY: ] + THIS.cFontFace + [; FONT-STYLE: normal">]
+
+ENDPROC
+PROCEDURE htmlencode
+LPARAMETERS cHTML
+
+*!*	cHTML = STRTRAN(cHTML, '&', "&amp;")
+*!*	cHTML = STRTRAN(cHTML, '<', "&lt;")
+*!*	cHTML = STRTRAN(cHTML, '>', "&gt;")
+
+RETURN cHTML
+
+
+
+ENDPROC
+PROCEDURE write
+LPARAMETERS cHTML
+LOCAL cBGColor
+LOCAL cScript
+
+cHTML = STRTRAN(cHTML,CHR(0),'')
+
+IF NOT "<body" $ LOWER(cHTML)
+	cBGColor = RIGHT(TRANSFORM(THIS.nBackColor,"@0"),6)
+	cBGColor = [#] + SUBSTR(cBGColor,5,2) + SUBSTR(cBGColor,3,2) + SUBSTR(cBGColor,1,2)
+
+	TEXT TO cScript NOSHOW PRETEXT ' '
+		<SCRIPT ID=clientEventHandlersJS LANGUAGE=javascript>
+		document.oncontextmenu =
+		function document_oncontextmenu() {return false;};
+
+		document.onkeypress =
+		function (evt) {
+		  if (event.keyCode == 27)
+		    location.href = "vfps://close/";
+
+		  return true;
+		};
+
+		</SCRIPT>
+	ENDTEXT
+	cHTML = [<html><head>] + cScript + [</head><body bgcolor="] + cBGColor + [" scroll="auto"><font style="FONT-SIZE: ]+TRANSFORM(INT(THIS.nFontSize))+[px; FONT-FAMILY: ] + THIS.cFontFace + [; FONT-STYLE: normal">] + cHTML + [</font></body></html>]
+ENDIF
+
+DO WHILE NOT VARTYPE(THIS.Document) = "O"
+ENDDO
+
+THIS.Document.Open()
+THIS.Document.Write(cHTML)
+THIS.Document.Close()
+
+THIS.Document.body.topmargin = 1
+THIS.Document.body.leftmargin = 3
+
+RETURN .T.
+ENDPROC
+[END METHODS]
+[BINSTART OLE]
+CHECKSUM=32667
+[BINEND OLE]
+[BINSTART OLE2]
+CHECKSUM=60621
+[BINEND OLE2]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+nbackcolor
+cfontface
+nfontsize
+*write 
+*getfonttag Add font to tag.
+*htmlencode 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cwebbrowser
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J5C
+[CLASS] cfoxgrid
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] grid
+[OBJNAME] cgotodefgrid
+[START PROPERTIES]
+ColumnCount = 3
+FontName = "Tahoma"
+FontSize = 8
+AllowHeaderSizing = .F.
+AllowRowSizing = .F.
+DeleteMark = .F.
+GridLines = 0
+GridLineWidth = 1
+HeaderHeight = 18
+Height = 288
+Panel = 1
+ReadOnly = .T.
+RecordMark = .F.
+RecordSource = "SymbolCursor"
+RowHeight = 18
+ScrollBars = 3
+SplitBar = .F.
+Width = 545
+ForeColor = 0,0,0
+BackColor = 255,255,255
+GridLineColor = 192,192,192
+Name = "cgotodefgrid"
+Column1.FontBold = .F.
+Column1.FontName = "Tahoma"
+Column1.FontSize = 8
+Column1.Alignment = 0
+Column1.ColumnOrder = 1
+Column1.ControlSource = ""
+Column1.Width = 237
+Column1.ReadOnly = .T.
+Column1.DynamicBackColor = ""
+Column1.ForeColor = 0,0,0
+Column1.BackColor = 255,255,255
+Column1.Name = "colFilename"
+Column2.FontBold = .F.
+Column2.FontName = "Tahoma"
+Column2.FontSize = 8
+Column2.Alignment = 0
+Column2.ColumnOrder = 2
+Column2.ControlSource = ""
+Column2.Width = 182
+Column2.ReadOnly = .T.
+Column2.DynamicBackColor = ""
+Column2.ForeColor = 0,0,0
+Column2.BackColor = 255,255,255
+Column2.Name = "colClassMethod"
+Column3.FontBold = .F.
+Column3.FontName = "Tahoma"
+Column3.FontSize = 8
+Column3.Alignment = 0
+Column3.ColumnOrder = 3
+Column3.ControlSource = ""
+Column3.Width = 600
+Column3.ReadOnly = .T.
+Column3.DynamicBackColor = ""
+Column3.ForeColor = 0,0,0
+Column3.BackColor = 255,255,255
+Column3.Name = "colCode"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE AfterRowColChange
+LPARAMETERS nColIndex
+
+THISFORM.ShowDetail()
+
+ENDPROC
+PROCEDURE Init
+#include "foxref.h"
+
+DoDefault()
+
+THIS.colFilename.Header1.Caption    = GRID_FILENAME_LOC
+THIS.colClassMethod.Header1.Caption = GRID_CLASSMETHOD_LOC
+THIS.colCode.Header1.Caption        = GRID_CODE_LOC
+
+THIS.colFilename.ControlSource    = [IIF(SymbolCursor.FileID = "WINDOW", OPENWINDOW_LOC, ADDBS(SymbolCursor.Folder) + RTRIM(SymbolCursor.Filename))]
+THIS.colClassMethod.ControlSource = [THISFORM.GetClassMethodDescription()]
+THIS.colCode.ControlSource        = [THISFORM.StripTabs(SymbolCursor.Abstract)]
+
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+7[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J6Q
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cgotodefgrid.colFilename
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+Caption = "File name"
+ForeColor = 0,0,0
+Name = "Header1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.SortBy("FILENAME")
+
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J70
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cgotodefgrid.colFilename
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+ReadOnly = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoDef()
+
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoDef()
+ENDIF
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ShowRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7A
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cgotodefgrid.colClassMethod
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+Caption = "Class.Method (Line)"
+ForeColor = 0,0,0
+Name = "Header1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.SortBy("CLASS")
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7B
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cgotodefgrid.colClassMethod
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+ReadOnly = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoDef()
+
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoDef()
+ENDIF
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ShowRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7K
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cgotodefgrid.colCode
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+Caption = "Code"
+ForeColor = 0,0,0
+BackColor = 212,208,200
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7U
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cgotodefgrid.colCode
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+ReadOnly = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoDef()
+
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoDef()
+ENDIF
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ShowRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cgotodefgrid
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+[START RESERVED1]
+  foxref.h<561[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J5C
+[CLASS] cfoxgrid
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] grid
+[OBJNAME] cresultsallgrid
+[START PROPERTIES]
+ColumnCount = 7
+FontName = "Tahoma"
+FontSize = 8
+AllowHeaderSizing = .F.
+AllowRowSizing = .F.
+DeleteMark = .F.
+GridLines = 2
+HeaderHeight = 18
+Height = 288
+ReadOnly = .T.
+RecordMark = .F.
+RecordSource = "FoxRefCursor"
+RowHeight = 18
+ScrollBars = 3
+SplitBar = .F.
+Width = 545
+GridLineColor = 192,192,192
+LockColumns = 1
+Name = "cresultsallgrid"
+Column1.FontBold = .F.
+Column1.FontName = "Tahoma"
+Column1.FontSize = 8
+Column1.Alignment = 0
+Column1.ColumnOrder = 3
+Column1.ControlSource = ""
+Column1.Enabled = .T.
+Column1.Width = 237
+Column1.ReadOnly = .T.
+Column1.DynamicBackColor = ""
+Column1.Name = "colFilename"
+Column2.FontBold = .F.
+Column2.FontName = "Tahoma"
+Column2.FontSize = 8
+Column2.Alignment = 0
+Column2.ColumnOrder = 4
+Column2.ControlSource = ""
+Column2.Enabled = .T.
+Column2.Width = 182
+Column2.ReadOnly = .T.
+Column2.DynamicBackColor = ""
+Column2.Name = "colClassMethod"
+Column3.FontBold = .F.
+Column3.FontName = "Tahoma"
+Column3.FontSize = 8
+Column3.Alignment = 0
+Column3.ColumnOrder = 7
+Column3.ControlSource = ""
+Column3.Enabled = .T.
+Column3.Width = 600
+Column3.ReadOnly = .T.
+Column3.Name = "colCode"
+Column4.FontName = "Tahoma"
+Column4.FontSize = 8
+Column4.Alignment = 2
+Column4.ColumnOrder = 1
+Column4.CurrentControl = "chkSelected"
+Column4.Enabled = .T.
+Column4.Width = 22
+Column4.Resizable = .F.
+Column4.ReadOnly = .F.
+Column4.Sparse = .F.
+Column4.DynamicCurrentControl = ""
+Column4.ForeColor = 0,0,0
+Column4.BackColor = 255,255,255
+Column4.Name = "colCheckbox"
+Column5.FontName = "Wingdings"
+Column5.FontSize = 10
+Column5.Alignment = 2
+Column5.ColumnOrder = 2
+Column5.Enabled = .T.
+Column5.Width = 15
+Column5.Resizable = .F.
+Column5.ReadOnly = .T.
+Column5.ForeColor = 0,0,0
+Column5.BackColor = 255,255,255
+Column5.Name = "colSymbol"
+Column6.FontName = "Tahoma"
+Column6.FontSize = 8
+Column6.Alignment = 0
+Column6.ColumnOrder = 5
+Column6.Width = 90
+Column6.ReadOnly = .T.
+Column6.Name = "colMethod"
+Column7.FontName = "Tahoma"
+Column7.FontSize = 8
+Column7.Alignment = 1
+Column7.ColumnOrder = 6
+Column7.Width = 50
+Column7.ReadOnly = .T.
+Column7.Name = "colLine"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE AfterRowColChange
+LPARAMETERS nColIndex
+
+THISFORM.ShowDetail()
+
+ENDPROC
+PROCEDURE Init
+#include "foxref.h"
+
+DoDefault()
+
+THIS.colCheckbox.DynamicCurrentControl = [IIF(ISNULL(FoxRefCursor.Checked), "Text1", "chkSelected")]
+
+THIS.colSymbol.Header1.Caption      = '#'
+THIS.colCheckbox.Header1.Caption    = ''  && checkbox column
+THIS.colFilename.Header1.Caption    = GRID_FILENAME_LOC
+THIS.colClassMethod.Header1.Caption = GRID_CLASSMETHOD_LOC
+THIS.colCode.Header1.Caption        = GRID_CODE_LOC
+
+THIS.colSymbol.ControlSource      = [IIF(FoxRefCursor.RefCnt > 1, CHR(128 + MIN(FoxRefCursor.RefCnt, 9)), '')]
+THIS.colCheckbox.ControlSource    = [FoxRefCursor.Checked]
+THIS.colFilename.ControlSource    = [ADDBS(FoxRefCursor.Folder) + RTRIM(FoxRefCursor.Filename)]
+THIS.colClassMethod.ControlSource = [THISFORM.GetClassMethodDescription(THISFORM.lShowDistinctMethodLine)]
+THIS.colMethod.ControlSource      = [IIF('.' $ FoxRefCursor.ProcName, JUSTEXT(FoxRefCursor.ProcName), FoxRefCursor.ProcName)]
+* THIS.colLine.ControlSource        = [IIF(INLIST(FoxRefCursor.FindType, FINDTYPE_NAME, FINDTYPE_PROPERTYNAME, FINDTYPE_PROPERTYVALUE, FINDTYPE_EXPR, FINDTYPE_OTHER), '', LTRIM(STR(FoxRefCursor.ProcLineNo, 8, 0)))]
+THIS.colLine.ControlSource        = [IIF(FoxRefCursor.ProcLineNo == 0, '', LTRIM(STR(FoxRefCursor.ProcLineNo, 8, 0)))]
+THIS.colCode.ControlSource        = [THISFORM.StripTabs(FoxRefCursor.Abstract)]
+
+
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+16[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J6Q
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cresultsallgrid.colFilename
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+Caption = "File name"
+ForeColor = 0,0,0
+Name = "Header1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.OnSortBy("FILENAME")
+
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J70
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cresultsallgrid.colFilename
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Enabled = .T.
+Margin = 0
+ReadOnly = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoReference()
+
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoReference()
+ELSE
+	DoDefault(nKeyCode, nShiftAltCtrl)
+ENDIF
+
+
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ResultsRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7A
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cresultsallgrid.colClassMethod
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+Caption = "Class.Method, Line"
+ForeColor = 0,0,0
+Name = "Header1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.OnSortBy("CLASS")
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7B
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cresultsallgrid.colClassMethod
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Enabled = .T.
+Margin = 0
+ReadOnly = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoReference()
+
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoReference()
+ELSE
+	DoDefault(nKeyCode, nShiftAltCtrl)
+ENDIF
+
+
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ResultsRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7K
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cresultsallgrid.colCode
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+Caption = "Code"
+ForeColor = 0,0,0
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JO0N5J7U
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cresultsallgrid.colCode
+[START PROPERTIES]
+FontBold = .F.
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Enabled = .T.
+Margin = 0
+ReadOnly = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoReference()
+
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoReference()
+ELSE
+	DoDefault(nKeyCode, nShiftAltCtrl)
+ENDIF
+
+
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ResultsRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0K70P5RJL
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cresultsallgrid.colCheckbox
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 2
+Caption = ""
+Picture = bitmaps\check.bmp
+Name = "Header1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.OnSortBy("CHECKED")
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0K70P5RJM
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cresultsallgrid.colCheckbox
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+Visible = .F.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoReference()
+ELSE
+	DoDefault(nKeyCode, nShiftAltCtrl)
+ENDIF
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0K70P5RJN
+[CLASS] cfoxcheckbox
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] checkbox
+[OBJNAME] chkSelected
+[PARENT] cresultsallgrid.colCheckbox
+[START PROPERTIES]
+Top = 35
+Left = 35
+Centered = .T.
+Caption = ""
+Enabled = .T.
+SpecialEffect = 1
+ForeColor = 0,0,0
+BackColor = 255,255,255
+ReadOnly = .F.
+Name = "chkSelected"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoReference()
+ELSE
+	DoDefault(nKeyCode, nShiftAltCtrl)
+ENDIF
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0M114IPCL
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cresultsallgrid.colSymbol
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+FontCharSet = 0
+Alignment = 2
+Caption = "#"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0M114IPCM
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cresultsallgrid.colSymbol
+[START PROPERTIES]
+FontName = "Wingdings"
+FontSize = 10
+Alignment = 2
+BorderStyle = 0
+Enabled = .T.
+Margin = 0
+ReadOnly = .F.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _18F19CEW2
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cresultsallgrid.colMethod
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Caption = "Method"
+Name = "Header1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.OnSortBy("METHOD")
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _18F19CEW3
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cresultsallgrid.colMethod
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 0
+BorderStyle = 0
+Margin = 0
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoReference()
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoReference()
+ELSE
+	DoDefault(nKeyCode, nShiftAltCtrl)
+ENDIF
+
+
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ResultsRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _18F19CEW4
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] cresultsallgrid.colLine
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 2
+Caption = "Line"
+Name = "Header1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THISFORM.OnSortBy("LINENO")
+
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _18F19CEW5
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] cresultsallgrid.colLine
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Alignment = 1
+BorderStyle = 0
+Margin = 0
+Visible = .T.
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+THISFORM.GotoReference()
+ENDPROC
+PROCEDURE KeyPress
+LPARAMETERS nKeyCode, nShiftAltCtrl
+
+IF nKeyCode == 13
+	NODEFAULT
+	THISFORM.GotoReference()
+ELSE
+	DoDefault(nKeyCode, nShiftAltCtrl)
+ENDIF
+
+
+ENDPROC
+PROCEDURE RightClick
+THISFORM.ResultsRightClickMenu()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cresultsallgrid
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+Wingdings, 0, 10, 12, 15, 12, 18, 3, 0
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+[START RESERVED1]
+  foxref.h<561[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LL128X03
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] cprogressform
+[START PROPERTIES]
+Height = 94
+Width = 378
+Desktop = .T.
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "Progress"
+ControlBox = .F.
+MaxButton = .F.
+MinButton = .F.
+AlwaysOnTop = .T.
+nseconds = 0
+Name = "cprogressform"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+LPARAMETERS cText
+
+DoDefault()
+
+THIS.BorderStyle = 2  && fixed dialog
+
+** We check to see if a description was passed
+IF VARTYPE(m.cText) == 'C'
+	THIS.SetDescription(m.cText)
+ENDIF
+
+THIS.nSeconds = SECONDS()
+
+THIS.SetStatus()
+THIS.lblStatus.Visible = .T.
+
+
+ENDPROC
+PROCEDURE setdescription
+LPARAMETERS cText
+
+IF VARTYPE(m.cText) == 'C'
+	THIS.lblDescription.Caption = LEFT(m.cText, 255)
+	THIS.lblDescription.Visible = .T.
+ELSE
+	THIS.lblDescription.Caption = ''
+ENDIF
+
+ENDPROC
+PROCEDURE setmax
+LPARAMETERS nMax
+
+** We check to see if lnMax is numeric and if it isn't,
+** we assume it's supposed to be 100
+IF VARTYPE(m.nMax) == 'N'
+	** We check to make sure nMax isn't less than the current value
+	** of the progress bar, and it is, we set it to the current value
+	** of the progress bar
+	IF m.nMax < THIS.oProgressBar.Value
+		m.nMax = THIS.oProgressBar.Value
+	ELSE
+		** We make sure nMax isn't smaller than 1
+		IF m.nMax < 1
+			m.nMax = THIS.oProgressBar.Value
+		ENDIF
+	ENDIF
+
+	** We set the progress bar's maximum value
+	THIS.oProgressBar.Max = MAX(m.nMax, 1)
+ENDIF
+
+
+ENDPROC
+PROCEDURE setprogress
+LPARAMETERS nValue, cStatusMsg
+
+** Make sure nValue is numeric and if it isn't, we set it to 0
+If VARTYPE(m.nValue) <> 'N' OR m.nValue < 0
+	m.nValue = 0
+ENDIF
+
+IF VARTYPE(m.nMax) == 'N'
+	IF m.nMax < 1
+		m.nMax = 100
+	ENDIF
+	
+	** We check to make sure lnValue is not greater than lnMax,
+	** as that would raise an error in the progress bar itself
+	IF m.nValue > m.nMax
+		m.nMax = m.nValue
+	ENDIF
+
+	THIS.oProgressBar.Max = m.nMax
+ENDIF
+
+THIS.oProgressBar.Value = m.nValue
+
+IF VARTYPE(m.cStatusMsg) == 'C'
+	THIS.SetStatus(m.cStatusMsg)
+ENDIF
+
+** to handle if the Cancel button was pressed
+DOEVENTS
+
+RETURN !THIS.lCancel
+
+ENDPROC
+PROCEDURE setstatus
+* Abstract:
+*   Set the status message.
+*
+* Parameters:
+*	[cStatusMsg]
+LPARAMETERS cStatusMsg
+
+IF VARTYPE(m.cStatusMsg) == 'C'
+	THIS.lblStatus.Caption = LEFT(m.cStatusMsg, 255)
+ELSE
+	THIS.lblStatus.Caption = ''
+ENDIF
+ENDPROC
+PROCEDURE update
+** We 'update' the progress of the progress bar by 1
+THIS.oProgressBar.Update()
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+6[END RESERVED2]
+[START RESERVED3]
+nseconds
+lcancel
+*update 
+*setdescription 
+*setprogress 
+*setmax 
+*setstatus 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0PK0USCAU
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] imgAnimation
+[PARENT] cprogressform
+[START PROPERTIES]
+Picture = bitmaps\findcomp.gif
+Height = 45
+Left = 10
+Top = 5
+Width = 48
+Name = "imgAnimation"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LL12JRA9
+[CLASS] cprogressbar
+[CLASSLOC] foxref.vcx
+[BASECLASS] olecontrol
+[OBJNAME] oProgressBar
+[PARENT] cprogressform
+[START PROPERTIES]
+Top = 58
+Left = 10
+Height = 17
+Width = 280
+Name = "oProgressBar"
+[END PROPERTIES]
+[BINSTART OLE]
+CHECKSUM=40744
+[BINEND OLE]
+[BINSTART OLE2]
+CHECKSUM=47342
+[BINEND OLE2]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LL12N8V8
+[CLASS] cfoxbutton
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] commandbutton
+[OBJNAME] cmdCancel
+[PARENT] cprogressform
+[START PROPERTIES]
+Top = 55
+Left = 299
+Cancel = .T.
+Caption = "Cancel"
+Name = "cmdCancel"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+THIS.Parent.lCancel = .T.
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JF0V8MNW
+[CLASS] cfoxlabel
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] label
+[OBJNAME] lblStatus
+[PARENT] cprogressform
+[START PROPERTIES]
+Caption = "Status message goes here... (do not localize!)"
+Height = 15
+Left = 12
+Top = 79
+Visible = .F.
+Width = 358
+Name = "lblStatus"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LL13QTZD
+[CLASS] cfoxlabel
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] label
+[OBJNAME] lblDescription
+[PARENT] cprogressform
+[START PROPERTIES]
+Caption = "Description goes here (do not localize!)"
+Height = 15
+Left = 80
+Top = 20
+Visible = .F.
+Width = 292
+Name = "lblDescription"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cprogressform
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LL12AYZW
+[CLASS] olecontrol
+[BASECLASS] olecontrol
+[OBJNAME] canimation
+[START PROPERTIES]
+Height = 47
+Width = 58
+cautoloadanimation = 
+lautoplay = .T.
+Name = "canimation"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE load
+LPARAMETERS cAnimationFile
+
+*- This method is designed to allow the laoding of a specified animation file
+*- through a common interface
+*-
+*- By passing lcAnimationFile, we can load the file to be played.
+
+** We make a sure this method is being used as it was intended
+If VARTYPE(m.cAnimationFile) <> 'C'
+	ASSERT .F. MESSAGE "cAnimationFile needs to be of type character and is not optional."
+ELSE
+	** We check to make sure the file exists
+	IF FILE(m.cAnimationFile)
+		** We open the animation file
+		THIS.Open(m.cAnimationFile)
+		
+		** We check to see if we need to automatically play the animation or not
+		IF THIS.lAutoPlay
+			** We play the animation
+			THIS.Play()
+		ENDIF
+	ENDIF
+ENDIF
+ENDPROC
+PROCEDURE pause
+*- This method is designed to allow the pausing of the currently
+*- running animation file through a common interface
+
+** We give the illusion that the animation has been paused
+** by calling the stop method
+THIS.Stop()
+ENDPROC
+[END METHODS]
+[BINSTART OLE]
+CHECKSUM=4347
+[BINEND OLE]
+[BINSTART OLE2]
+CHECKSUM=14987
+[BINEND OLE2]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+cautoloadanimation
+lautoplay
+*load 
+*pause 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] canimation
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LL12F1ET
+[CLASS] olecontrol
+[BASECLASS] olecontrol
+[OBJNAME] cprogressbar
+[START PROPERTIES]
+Height = 17
+Width = 280
+Name = "cprogressbar"
+[END PROPERTIES]
+[BINSTART OLE]
+CHECKSUM=51271
+[BINEND OLE]
+[BINSTART OLE2]
+CHECKSUM=32603
+[BINEND OLE2]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cprogressbar
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0MY0Q56IA
+[CLASS] custom
+[BASECLASS] custom
+[OBJNAME] scriptengine
+[START PROPERTIES]
+foxref = .NULL.
+Name = "scriptengine"
+[END PROPERTIES]
+[START PROTECTED]
+ClassLibrary
+AddObject
+AddProperty
+BaseClass
+CloneObject
+Comment
+ControlCount
+Controls
+Error
+Height
+HelpContextID
+NewObject
+Objects
+Picture
+ReadExpression
+ReadMethod
+RemoveObject
+ResetToDefault
+SaveAsClass
+ShowWhatsThis
+Tag
+WhatsThisHelpID
+Width
+WriteExpression
+WriteMethod
+[END PROTECTED]
+[START METHODS]
+PROCEDURE Init
+THIS.FoxRef = NEWOBJECT("FoxRef", "FoxRefEngine.prg")
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+foxref
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] scriptengine
+[EOF]

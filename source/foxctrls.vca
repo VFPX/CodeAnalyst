@@ -1,0 +1,525 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Class     
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0IS11K2YK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cfoxbutton
+[START PROPERTIES]
+Height = 23
+Width = 72
+FontName = "Tahoma"
+FontSize = 8
+Caption = "OK"
+Name = "cfoxbutton"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+[START RESERVED7]
+Fox Reference application form controls.[END RESERVED7]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxbutton
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0IS11MSYF
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] cfoxlabel
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+BackStyle = 0
+Caption = "Label1"
+Height = 15
+Width = 40
+Name = "cfoxlabel"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxlabel
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0IS11OIJS
+[CLASS] combobox
+[BASECLASS] combobox
+[OBJNAME] cfoxcombo
+[START PROPERTIES]
+FontName = "Microsoft Sans Serif"
+FontSize = 8
+Height = 21
+Width = 100
+Name = "cfoxcombo"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxcombo
+[START PROPERTIES]
+Microsoft Sans Serif, 0, 8, 5, 13, 11, 20, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0IS11T60G
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] cfoxcheckbox
+[START PROPERTIES]
+Height = 17
+Width = 60
+FontName = "Tahoma"
+FontSize = 8
+BackStyle = 0
+Caption = "Check1"
+Value = .F.
+Name = "cfoxcheckbox"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxcheckbox
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JN0Z9UHT
+[CLASS] container
+[BASECLASS] container
+[OBJNAME] cstatusbar
+[START PROPERTIES]
+Width = 300
+Height = 21
+SpecialEffect = 1
+Name = "cstatusbar"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+THIS.SetStatus('')
+THIS.Width = THIS.Width
+
+
+ENDPROC
+PROCEDURE setstatus
+LPARAMETERS cStatus
+
+THIS.lblStatus.Caption = cStatus
+
+ENDPROC
+PROCEDURE width_assign
+LPARAMETERS nWidth
+
+THIS.Width = nWidth
+THIS.lblStatus.Width = nWidth - THIS.lblStatus.Left
+
+
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+2[END RESERVED2]
+[START RESERVED3]
+*width_assign 
+*setstatus 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JN0ZCTDU
+[CLASS] cfoxlabel
+[CLASSLOC] foxctrls.vcx
+[BASECLASS] label
+[OBJNAME] lblStatus
+[PARENT] cstatusbar
+[START PROPERTIES]
+Caption = "Status message goes here"
+Height = 15
+Left = 5
+Top = 4
+Width = 291
+Name = "lblStatus"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cstatusbar
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0JN11MD99
+[CLASS] grid
+[BASECLASS] grid
+[OBJNAME] cfoxgrid
+[START PROPERTIES]
+Height = 200
+Width = 320
+HighlightStyle = 2
+Name = "cfoxgrid"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxgrid
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0L914VUJE
+[CLASS] listbox
+[BASECLASS] listbox
+[OBJNAME] cfoxlistbox
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Height = 186
+Width = 329
+IntegralHeight = .T.
+Name = "cfoxlistbox"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxlistbox
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LF0IAILY
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] cfoxtextbox
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Format = "KT"
+Height = 21
+Width = 100
+Name = "cfoxtextbox"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxtextbox
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LF0IW68P
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] cfoxoptiongroup
+[START PROPERTIES]
+ButtonCount = 2
+BackStyle = 0
+Value = 1
+Height = 46
+Width = 215
+Name = "cfoxoptiongroup"
+Option1.FontName = "Tahoma"
+Option1.FontSize = 8
+Option1.BackStyle = 0
+Option1.Caption = "Option1"
+Option1.Value = 1
+Option1.Height = 17
+Option1.Left = 5
+Option1.Top = 5
+Option1.Width = 61
+Option1.Name = "Option1"
+Option2.FontName = "Tahoma"
+Option2.FontSize = 8
+Option2.BackStyle = 0
+Option2.Caption = "Option2"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Top = 24
+Option2.Width = 61
+Option2.Name = "Option2"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxoptiongroup
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LL12MRG7
+[CLASS] editbox
+[BASECLASS] editbox
+[OBJNAME] cfoxeditbox
+[START PROPERTIES]
+FontName = "Tahoma"
+FontSize = 8
+Height = 53
+Width = 100
+Name = "cfoxeditboz"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxeditbox
+[START PROPERTIES]
+Tahoma, 0, 8, 5, 13, 11, 21, 2, 0
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _0LO003Q11
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] cfoxrefform
+[START PROPERTIES]
+DoCreate = .T.
+Caption = "Form"
+Icon = bitmaps\foxref.ico
+AllowOutput = .F.
+oresourceoptions = .NULL.
+cresourceid = 
+cresourcename = 
+ctalk = 
+cescape = 
+nsys3054 = 0
+coldstatus = 
+nsys2333 = 0
+cudfparms = 
+Name = "cfoxrefform"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Activate
+SET TALK OFF
+
+** We remember the current status
+THIS.cOldStatus = SET("MESSAGE",1)
+
+THIS.cTalk = "OFF"
+THIS.cEscape = SET("ESCAPE")
+SET ESCAPE OFF
+
+THIS.nSys3054 = INT(VAL(SYS(3054)))
+SYS(3054,0)
+
+THIS.cUDFParms = SET("UDFPARMS")
+SET UDFPARMS TO VALUE
+
+DODEFAULT()
+ENDPROC
+PROCEDURE Deactivate
+** We reset the TALK setting
+LOCAL cTalk, cEscape, cUDFParms
+
+m.cUDFParms = THIS.cUDFParms
+SET UDFPARMS TO &cUDFParms
+
+m.cTalk = THIS.cTalk
+SET TALK &cTalk
+
+m.cEscape = THIS.cEscape
+
+SET ESCAPE &cEscape
+SYS(3054,THIS.nSys3054)
+
+
+** We make sure the screen is activated
+ACTIVATE SCREEN
+
+** We reset the old status
+SET MESSAGE TO THIS.cOldStatus
+
+DODEFAULT()
+
+ENDPROC
+PROCEDURE Destroy
+THIS.Deactivate()
+IF !ISNULL(THIS.oResourceOptions)
+	THIS.oResourceOptions.Set("TOP", THIS.Top)
+	THIS.oResourceOptions.Set("LEFT", THIS.Left)
+	IF THIS.BorderStyle == 3 && if sizable
+		THIS.oResourceOptions.Set("WIDTH", THIS.Width)
+		THIS.oResourceOptions.Set("HEIGHT", THIS.Height)
+	ENDIF
+ENDIF
+THIS.SaveOptions()
+ENDPROC
+PROCEDURE Init
+DODEFAULT()
+
+SYS(2333, THIS.nSys2333)
+IF !EMPTY(THIS.cResourceID)
+	IF EMPTY(THIS.cResourceName)
+		THIS.cResourceName = THIS.Name
+	ENDIF
+	THIS.oResourceOptions = NEWOBJECT("FoxResource", "FoxResource.prg")
+	THIS.oResourceOptions.Load(THIS.cResourceID, THIS.cResourceName)
+
+	THIS.LoadOptions()
+ENDIF
+
+ENDPROC
+PROCEDURE Load
+SET CONSOLE OFF
+THIS.cTalk = SET("TALK")
+SET CONSOLE ON
+SET TALK OFF
+
+THIS.nSys2333 = INT(VAL(SYS(2333, 2)))
+SYS(2333, 0)
+
+SET DELETED ON
+
+DODEFAULT()
+ENDPROC
+PROCEDURE loadoptions
+* -- Restore options from Resource file
+LOCAL nTop, nLeft, nWidth, nHeight
+
+IF !ISNULL(THIS.oResourceOptions)
+	m.nTop = THIS.oResourceOptions.Get("TOP")
+	IF VARTYPE(m.nTop) == 'N'
+		THIS.Top = m.nTop
+	ENDIF
+	m.nLeft = THIS.oResourceOptions.Get("LEFT")
+	IF VARTYPE(m.nLeft) == 'N'
+		THIS.Left = m.nLeft
+	ENDIF
+
+	IF THIS.BorderStyle == 3 && if sizable
+		m.nHeight = THIS.oResourceOptions.Get("HEIGHT")
+		IF VARTYPE(m.nHeight) == 'N' AND m.nHeight >= 0 && AND BETWEEN(m.nWidth, THIS.MinHeight, THIS.MaxHeight)
+			THIS.Height = m.nHeight
+		ENDIF
+		m.nWidth = THIS.oResourceOptions.Get("WIDTH")
+		IF VARTYPE(m.nWidth) == 'N' AND m.nWidth >= 0 && AND BETWEEN(m.nWidth, THIS.MinWidth, THIS.MaxWidth)
+			THIS.Width = m.nWidth
+		ENDIF
+	ENDIF
+ENDIF
+
+
+ENDPROC
+PROCEDURE saveoptions
+* -- Restore options from Resource file
+IF !ISNULL(THIS.oResourceOptions)
+	THIS.oResourceOptions.Save(THIS.cResourceID, THIS.cResourceName)
+ENDIF
+
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+oresourceoptions Collection of options to save to Fox Resource file.
+cresourceid
+cresourcename
+ctalk
+cescape
+nsys3054
+coldstatus
+nsys2333
+cudfparms
+*saveoptions 
+*loadoptions 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] cfoxrefform
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

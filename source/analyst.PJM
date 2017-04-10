@@ -1,0 +1,27 @@
+Version=  1.20
+Author=
+Company=
+Address=
+City=
+State=
+Zip=
+Country=
+SaveCode=.T.
+Debug=.T.
+Encrypt=.F.
+NoLogo=.F.
+CommentStyle=1
+Comments=
+CompanyName=
+FileDescription=
+LegalCopyright=
+LegalTrademarks=
+ProductName=
+Major=
+Minor=
+Revision=
+AutoIncrement=.F.
+[OLEServers]
+[OLEServersEnd]
+[ProjectFiles]
+[EOF]
